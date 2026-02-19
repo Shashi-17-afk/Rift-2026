@@ -8,16 +8,16 @@ PharmaGuard parses a patient’s VCF file, extracts variants for a target gene, 
 
 ## ✨ Features
 
-| Feature | Detail |
-|---|---|
-| VCF Parsing | PyVCF3 — accepts `.vcf`, `.vcf.gz`, `.bcf` up to 50 MB |
-| Variant Extraction | Annotation‑based (CSQ/ANN/GENEINFO) + coordinate fallback (hg19) |
-| Risk Engine | Star‑allele tables → diplotype → phenotype → risk label / severity / confidence |
-| AI Explanation | OpenAI‑compatible LLM (deterministic fallback when API key absent) |
-| 6 Gene–Drug Pairs | CYP2D6/Codeine · CYP2C9/Warfarin · CYP2C19/Clopidogrel · SLCO1B1/Simvastatin · TPMT/Azathioprine · DPYD/Fluorouracil |
-| Modern Frontend | Drag‑and‑drop upload, animated DNA spinner, color‑coded risks |
-| Demo Mode | One click — no VCF needed |
-| Docker‑ready | Single `docker compose up` starts backend + frontend |
+| Feature            | Detail                                                                                                               |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| VCF Parsing        | PyVCF3 — accepts `.vcf`, `.vcf.gz`, `.bcf` up to 50 MB                                                               |
+| Variant Extraction | Annotation‑based (CSQ/ANN/GENEINFO) + coordinate fallback (hg19)                                                     |
+| Risk Engine        | Star‑allele tables → diplotype → phenotype → risk label / severity / confidence                                      |
+| AI Explanation     | OpenAI‑compatible LLM (deterministic fallback when API key absent)                                                   |
+| 6 Gene–Drug Pairs  | CYP2D6/Codeine · CYP2C9/Warfarin · CYP2C19/Clopidogrel · SLCO1B1/Simvastatin · TPMT/Azathioprine · DPYD/Fluorouracil |
+| Modern Frontend    | Drag‑and‑drop upload, animated DNA spinner, color‑coded risks                                                        |
+| Demo Mode          | One click — no VCF needed                                                                                            |
+| Docker‑ready       | Single `docker compose up` starts backend + frontend                                                                 |
 
 ---
 
@@ -97,6 +97,7 @@ Open http://localhost:3000 in your browser.
 ## 🌐 API Reference
 
 ### GET /health
+
 Liveness probe — returns status, version, and supported drugs/genes.
 
 ```json
@@ -105,7 +106,14 @@ Liveness probe — returns status, version, and supported drugs/genes.
   "service": "PharmaGuard API",
   "version": "1.0.0",
   "timestamp": "2026-02-19T11:46:37Z",
-  "supported_drugs": ["AZATHIOPRINE", "CLOPIDOGREL", "CODEINE", "FLUOROURACIL", "SIMVASTATIN", "WARFARIN"],
+  "supported_drugs": [
+    "AZATHIOPRINE",
+    "CLOPIDOGREL",
+    "CODEINE",
+    "FLUOROURACIL",
+    "SIMVASTATIN",
+    "WARFARIN"
+  ],
   "supported_genes": ["CYP2C19", "CYP2C9", "CYP2D6", "DPYD", "SLCO1B1", "TPMT"]
 }
 ```
@@ -113,6 +121,7 @@ Liveness probe — returns status, version, and supported drugs/genes.
 ---
 
 ### GET /api/test
+
 Returns a pre‑built mock response (Warfarin/CYP2C9).
 
 ```bash
@@ -122,15 +131,16 @@ curl http://localhost:8000/api/test
 ---
 
 ### POST /api/analyze
+
 Full analysis from VCF to risk + explanation.
 
 Form fields:
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| patient_id | string | ✅ | Patient identifier e.g. `PATIENT_001` |
-| drug | string | ✅ | One of `WARFARIN`, `CODEINE`, `CLOPIDOGREL`, `SIMVASTATIN`, `AZATHIOPRINE`, `FLUOROURACIL` |
-| file | file | ✅ | `.vcf`, `.vcf.gz`, or `.bcf` — max 50 MB |
+| Field      | Type   | Required | Description                                                                                |
+| ---------- | ------ | -------- | ------------------------------------------------------------------------------------------ |
+| patient_id | string | ✅       | Patient identifier e.g. `PATIENT_001`                                                      |
+| drug       | string | ✅       | One of `WARFARIN`, `CODEINE`, `CLOPIDOGREL`, `SIMVASTATIN`, `AZATHIOPRINE`, `FLUOROURACIL` |
+| file       | file   | ✅       | `.vcf`, `.vcf.gz`, or `.bcf` — max 50 MB                                                   |
 
 Example — Python:
 
@@ -202,14 +212,14 @@ curl -X POST http://localhost:8000/api/analyze \
 
 ## 🧬 Gene–Drug Coverage
 
-| Drug | Gene | Risk Phenotypes |
-|---|---|---|
-| Warfarin | CYP2C9 | Poor · Intermediate · Normal Metabolizer |
-| Codeine | CYP2D6 | Poor · Intermediate · Normal · Ultrarapid Metabolizer |
-| Clopidogrel | CYP2C19 | Poor · Intermediate · Normal · Rapid · Ultrarapid Metabolizer |
-| Simvastatin | SLCO1B1 | Poor Function · Decreased Function · Normal Function |
-| Azathioprine | TPMT | Poor · Intermediate · Normal Metabolizer |
-| Fluorouracil | DPYD | No Activity · Severely Decreased · Intermediate · Normal Metabolizer |
+| Drug         | Gene    | Risk Phenotypes                                                      |
+| ------------ | ------- | -------------------------------------------------------------------- |
+| Warfarin     | CYP2C9  | Poor · Intermediate · Normal Metabolizer                             |
+| Codeine      | CYP2D6  | Poor · Intermediate · Normal · Ultrarapid Metabolizer                |
+| Clopidogrel  | CYP2C19 | Poor · Intermediate · Normal · Rapid · Ultrarapid Metabolizer        |
+| Simvastatin  | SLCO1B1 | Poor Function · Decreased Function · Normal Function                 |
+| Azathioprine | TPMT    | Poor · Intermediate · Normal Metabolizer                             |
+| Fluorouracil | DPYD    | No Activity · Severely Decreased · Intermediate · Normal Metabolizer |
 
 ---
 
@@ -282,3 +292,10 @@ POST /api/analyze
 ## 📄 License
 
 MIT — built for hackathon demonstration purposes. Results do not constitute medical advice.
+
+## Deployment Links
+
+- Backend : https://pharmaguard-api-5zx9.onrender.com/health
+- Swagger docs: https://pharmaguard-api-5zx9.onrender.com/docs
+- Demo response: https://pharmaguard-api-5zx9.onrender.com/api/test
+- Frontend : https://rift-2026.vercel.app/
