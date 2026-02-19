@@ -4,25 +4,38 @@
  */
 
 // Resolve API base dynamically (priority):
-// 1) ?api=https://... in URL → saved to localStorage
-// 2) <meta name="pg-api-base" content="...">
-// 3) localStorage.PG_API_BASE
-// 4) If running on localhost/127.0.0.1 → http://localhost:8000
-// 5) Fallback to relative root ('') to work with reverse proxies (Docker/Nginx)
+// 1) ?api=https://... in URL query param (overrides everything; also saved to localStorage)
+// 2) <meta name="pg-api-base" content="..."> in index.html
+// 3) localhost / 127.0.0.1  →  http://localhost:8000  (local dev)
+// 4) file:// protocol       →  http://localhost:8000  (opened directly from disk)
+// 5) PRODUCTION_API_BASE    →  hardcoded Render URL   (deployed on Vercel or any CDN)
+// 6) localStorage.PG_API_BASE
+// 7) Relative '' (Docker / Nginx reverse-proxy)
+
+// ── The deployed Render backend URL ──────────────────────────────────────────
+const PRODUCTION_API_BASE = 'https://pharmaguard-api-5zx9.onrender.com';
+
 (function setupApiBase() {
   const params = new URLSearchParams(window.location.search);
   const apiFromQuery = params.get('api');
   if (apiFromQuery) {
-    try { localStorage.setItem('PG_API_BASE', apiFromQuery); } catch {}
+    try { localStorage.setItem('PG_API_BASE', apiFromQuery); } catch { }
   }
 })();
 
 function inferApiBase() {
+  // 1. Explicit override via ?api= query param
   const fromQuery = new URLSearchParams(window.location.search).get('api');
   if (fromQuery && fromQuery.trim()) {
     return fromQuery.trim().replace(/\/$/, '');
   }
-  // Prefer localhost when developing locally (even if meta tag exists)
+
+  // 2. Meta tag (useful for whitelabel / self-hosted deployments)
+  const meta = document.querySelector('meta[name="pg-api-base"]');
+  const fromMeta = meta && meta.content && meta.content.trim();
+  if (fromMeta) return fromMeta.replace(/\/$/, '');
+
+  // 3. Local dev (file:// or localhost)
   if (window.location.protocol === 'file:') {
     return 'http://localhost:8000';
   }
@@ -30,13 +43,19 @@ function inferApiBase() {
   if (host === 'localhost' || host === '127.0.0.1') {
     return 'http://localhost:8000';
   }
-  const meta = document.querySelector('meta[name="pg-api-base"]');
-  const fromMeta = meta && meta.content && meta.content.trim();
-  if (fromMeta) return fromMeta.replace(/\/$/, '');
+
+  // 4. Any production/CDN deployment → use the known Render backend directly
+  if (window.location.hostname !== '') {
+    return PRODUCTION_API_BASE;
+  }
+
+  // 5. localStorage override
   try {
     const fromStorage = localStorage.getItem('PG_API_BASE');
     if (fromStorage && fromStorage.trim()) return fromStorage.trim().replace(/\/$/, '');
-  } catch {}
+  } catch { }
+
+  // 6. Docker/Nginx reverse-proxy (same origin)
   return '';
 }
 
