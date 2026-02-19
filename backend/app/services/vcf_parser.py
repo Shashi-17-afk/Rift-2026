@@ -2,7 +2,7 @@
 vcf_parser.py — VCF file parsing service.
 
 Accepts raw VCF bytes or a temp-file path.
-Uses PyVCF3 to parse records into plain dicts.
+Uses PyVCF to parse records into plain dicts.
 Raises VCFParseError for any malformed / unreadable VCF.
 """
 
@@ -13,7 +13,7 @@ import logging
 import tempfile
 from pathlib import Path
 from typing import Any
-import pyvcf3 as vcf
+import pyvcf
 
 from app.utils.exceptions import VCFParseError
 
@@ -45,8 +45,8 @@ class ParseResult:
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _record_to_dict(record: vcf.Variant) -> dict[str, Any]:
-    """Convert a PyVCF3 Record to a serialisable dict."""
+def _record_to_dict(record: pyvcf.model._Record) -> dict[str, Any]:
+    """Convert a PyVCF Record to a serialisable dict."""
     # ALT alleles may be symbolic (e.g. <DEL>) – convert to strings safely
     alts: list[str] = []
     if record.ALT:
@@ -86,7 +86,7 @@ def _record_to_dict(record: vcf.Variant) -> dict[str, Any]:
         "samples": samples,
     }
 
-def _parse_reader(reader: vcf.VCF) -> list[dict[str, Any]]:
+def _parse_reader(reader: pyvcf.Reader) -> list[dict[str, Any]]:
     """Iterate through all records and return list of dicts."""
     variants: list[dict[str, Any]] = []
     for record in reader:
@@ -117,7 +117,7 @@ def parse_vcf_bytes(vcf_bytes: bytes) -> ParseResult:
     if not vcf_bytes:
         raise VCFParseError("Uploaded VCF file is empty.")
 
-    # Write to a temp file so PyVCF3 can seek freely (needed for tabix / gz)
+    # Write to a temp file so PyVCF can seek freely (needed for tabix / gz)
     suffix = ".vcf.gz" if vcf_bytes[:2] == b"\x1f\x8b" else ".vcf"
     try:
         with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
@@ -154,9 +154,9 @@ def parse_vcf_path(file_path: str) -> ParseResult:
         raise VCFParseError(f"VCF file not found: {file_path}")
 
     try:
-        reader = vcf.VCF(str(path))
+        reader = pyvcf.Reader(str(path))
         variants = _parse_reader(reader)
-    except vcf.VCFError as exc:
+    except pyvcf.VCFError as exc:
         logger.warning("VCF parse error: %s", exc)
         raise VCFParseError(f"Malformed VCF: {exc}") from exc
     except Exception as exc:
