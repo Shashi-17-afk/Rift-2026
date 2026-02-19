@@ -1,0 +1,23 @@
+﻿..........F..................FF......................................... [ 56%]
+.......................................................                  [100%]
+================================== FAILURES ===================================
+______________ TestMockEndpoint.test_mock_is_high_risk_warfarin _______________
+tests\test_api.py:103: in test_mock_is_high_risk_warfarin
+    assert data["risk_assessment"]["risk_label"] == "HIGH_RISK"
+E   AssertionError: assert 'Toxic' == 'HIGH_RISK'
+E     
+E     - HIGH_RISK
+E     + Toxic
+______________ TestAnalyzeHappyPath.test_severity_is_valid_value ______________
+tests\test_api.py:174: in test_severity_is_valid_value
+    assert data["risk_assessment"]["severity"] in ("HIGH", "MODERATE", "LOW")
+E   AssertionError: assert 'moderate' in ('HIGH', 'MODERATE', 'LOW')
+_____________ TestAnalyzeHappyPath.test_risk_label_is_valid_value _____________
+tests\test_api.py:178: in test_risk_label_is_valid_value
+    assert data["risk_assessment"]["risk_label"] in (
+E   AssertionError: assert 'Adjust Dosage' in ('HIGH_RISK', 'MODERATE_RISK', 'LOW_RISK')
+=========================== short test summary info ===========================
+FAILED tests/test_api.py::TestMockEndpoint::test_mock_is_high_risk_warfarin
+FAILED tests/test_api.py::TestAnalyzeHappyPath::test_severity_is_valid_value
+FAILED tests/test_api.py::TestAnalyzeHappyPath::test_risk_label_is_valid_value
+3 failed, 124 passed in 15.89s

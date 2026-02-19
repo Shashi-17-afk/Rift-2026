@@ -1,0 +1,42 @@
+# ── Python ───────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+.Python
+
+# ── Virtual environments ─────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Environment / secrets ────────────────────────
+.env
+*.env.local
+
+# ── Testing ──────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.xml
+
+# ── IDE ──────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+*.swo
+
+# ── OS ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Docker ───────────────────────────────────────
+# (keep Dockerfiles tracked, ignore local compose overrides)
+docker-compose.override.yml

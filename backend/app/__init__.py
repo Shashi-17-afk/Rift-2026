@@ -1,0 +1,1 @@
+"""PharmaGuard backend application."""

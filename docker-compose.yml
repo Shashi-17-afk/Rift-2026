@@ -1,0 +1,82 @@
+# ══════════════════════════════════════════════════════════════════
+#  PharmaGuard — Docker Compose
+#  Starts: backend (FastAPI) + frontend (nginx)
+#
+#  Usage:
+#    docker compose up --build        # first run
+#    docker compose up -d             # detached
+#    docker compose logs -f backend   # follow API logs
+#    docker compose down              # stop & remove containers
+#
+#  URLs (after startup):
+#    Frontend  → http://localhost:3000
+#    API       → http://localhost:8000
+#    Swagger   → http://localhost:8000/docs
+# ══════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── FastAPI Backend ──────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pharmaguard-backend
+    restart: unless-stopped
+
+    # Mount .env if it exists (optional — no error if missing)
+    env_file:
+      - path: ./backend/.env
+        required: false
+
+    environment:
+      # Defaults — override in backend/.env or here
+      OPENAI_BASE_URL:       ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      LLM_MODEL:             ${LLM_MODEL:-gpt-4o-mini}
+      LLM_TIMEOUT_SECONDS:   ${LLM_TIMEOUT_SECONDS:-30}
+      MAX_VCF_SIZE_MB:       ${MAX_VCF_SIZE_MB:-50}
+
+    ports:
+      - "8000:8000"
+
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 20s
+      timeout:  5s
+      retries:  4
+      start_period: 15s
+
+    networks:
+      - pharma-net
+
+
+  # ── nginx Frontend ───────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pharmaguard-frontend
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 20s
+      timeout:  3s
+      retries:  3
+      start_period: 8s
+
+    networks:
+      - pharma-net
+
+
+networks:
+  pharma-net:
+    driver: bridge

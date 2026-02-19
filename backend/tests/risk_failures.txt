@@ -1,0 +1,127 @@
+﻿============================= test session starts =============================
+collected 36 items
+
+tests\test_risk_engine.py ..........FFFFFFFFF..F..FFFFFFFFF...           [100%]
+
+================================== FAILURES ===================================
+______ TestLookupPhenotype.test_phenotype_lookup[CYP2C9-none+none-Poor] _______
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: CYP2C9/none+none \u2192 'PM' (expected 'Poor')
+E   assert 'Poor' in 'PM'
+___ TestLookupPhenotype.test_phenotype_lookup[CYP2C9-normal+normal-Normal] ____
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: CYP2C9/normal+normal \u2192 'NM' (expected 'Normal')
+E   assert 'Normal' in 'NM'
+______ TestLookupPhenotype.test_phenotype_lookup[CYP2D6-none+none-Poor] _______
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: CYP2D6/none+none \u2192 'PM' (expected 'Poor')
+E   assert 'Poor' in 'PM'
+_ TestLookupPhenotype.test_phenotype_lookup[CYP2D6-increased+increased-Ultrarapid] _
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: CYP2D6/increased+increased \u2192 'URM' (expected 'Ultrarapid')
+E   assert 'Ultrarapid' in 'URM'
+______ TestLookupPhenotype.test_phenotype_lookup[CYP2C19-none+none-Poor] ______
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: CYP2C19/none+none \u2192 'PM' (expected 'Poor')
+E   assert 'Poor' in 'PM'
+__ TestLookupPhenotype.test_phenotype_lookup[CYP2C19-normal+increased-Rapid] __
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: CYP2C19/normal+increased \u2192 'RM' (expected 'Rapid')
+E   assert 'Rapid' in 'RM'
+___ TestLookupPhenotype.test_phenotype_lookup[SLCO1B1-reduced+reduced-Poor] ___
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: SLCO1B1/reduced+reduced \u2192 'PM' (expected 'Poor')
+E   assert 'Poor' in 'PM'
+__ TestLookupPhenotype.test_phenotype_lookup[TPMT-normal+none-Intermediate] ___
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: TPMT/normal+none \u2192 'IM' (expected 'Intermediate')
+E   assert 'Intermediate' in 'IM'
+_ TestLookupPhenotype.test_phenotype_lookup[DPYD-none+none-No Dihydropyrimidine] _
+tests\test_risk_engine.py:117: in test_phenotype_lookup
+    assert expected_keyword in pheno, f"{gene}/{pair} \u2192 '{pheno}' (expected '{expected_keyword}')"
+E   AssertionError: DPYD/none+none \u2192 'PM' (expected 'No Dihydropyrimidine')
+E   assert 'No Dihydropyrimidine' in 'PM'
+___________ TestLookupRisk.test_high_risk_rule_exists_for_all_genes ___________
+tests\test_risk_engine.py:141: in test_high_risk_rule_exists_for_all_genes
+    assert high_risk_phenotypes, f"No HIGH risk phenotype for {gene}"
+E   AssertionError: No HIGH risk phenotype for CYP2C9
+E   assert []
+___________ TestLookupRisk.test_unknown_phenotype_returns_fallback ____________
+tests\test_risk_engine.py:156: in test_unknown_phenotype_returns_fallback
+    assert rule["risk_label"] == "LOW_RISK"
+E   AssertionError: assert 'Unknown' == 'LOW_RISK'
+E     
+E     - LOW_RISK
+E     + Unknown
+________________ TestAssessRisk.test_warfarin_poor_metabolizer ________________
+tests\test_risk_engine.py:176: in test_warfarin_poor_metabolizer
+    assert pgx.phenotype in ("Poor Metabolizer", "Intermediate Metabolizer")
+E   AssertionError: assert 'IM' in ('Poor Metabolizer', 'Intermediate Metabolizer')
+E    +  where 'IM' = PharmacogenomicProfile(primary_gene='CYP2C9', diplotype='*2/*3', phenotype='IM', detected_variants=[VariantInfo(gene='...T', rsid='rs1799853'), VariantInfo(gene='CYP2C9', chromosome='10', position=1000, ref='C', alt='T', rsid='rs1057910')]).phenotype
+____________ TestAssessRisk.test_warfarin_no_variants_is_low_risk _____________
+tests\test_risk_engine.py:184: in test_warfarin_no_variants_is_low_risk
+    assert "Normal" in pgx.phenotype
+E   AssertionError: assert 'Normal' in 'NM'
+E    +  where 'NM' = PharmacogenomicProfile(primary_gene='CYP2C9', diplotype='*1/*1', phenotype='NM', detected_variants=[]).phenotype
+________________ TestAssessRisk.test_codeine_poor_metabolizer _________________
+tests\test_risk_engine.py:196: in test_codeine_poor_metabolizer
+    assert "Poor" in pgx.phenotype
+E   AssertionError: assert 'Poor' in 'PM'
+E    +  where 'PM' = PharmacogenomicProfile(primary_gene='CYP2D6', diplotype='*4/*6', phenotype='PM', detected_variants=[VariantInfo(gene='...T', rsid='rs3892097'), VariantInfo(gene='CYP2D6', chromosome='10', position=1000, ref='C', alt='T', rsid='rs5030655')]).phenotype
+_______________ TestAssessRisk.test_codeine_normal_is_low_risk ________________
+tests\test_risk_engine.py:201: in test_codeine_normal_is_low_risk
+    assert risk.risk_label == "LOW_RISK"
+E   AssertionError: assert 'Safe' == 'LOW_RISK'
+E     
+E     - LOW_RISK
+E     + Safe
+______________ TestAssessRisk.test_clopidogrel_poor_metabolizer _______________
+tests\test_risk_engine.py:211: in test_clopidogrel_poor_metabolizer
+    assert "Poor" in pgx.phenotype
+E   AssertionError: assert 'Poor' in 'PM'
+E    +  where 'PM' = PharmacogenomicProfile(primary_gene='CYP2C19', diplotype='*2/*3', phenotype='PM', detected_variants=[VariantInfo(gene=...', rsid='rs4244285'), VariantInfo(gene='CYP2C19', chromosome='10', position=1000, ref='C', alt='T', rsid='rs4986893')]).phenotype
+________________ TestAssessRisk.test_simvastatin_poor_function ________________
+tests\test_risk_engine.py:222: in test_simvastatin_poor_function
+    assert "Function" in pgx.phenotype
+E   AssertionError: assert 'Function' in 'PM'
+E    +  where 'PM' = PharmacogenomicProfile(primary_gene='SLCO1B1', diplotype='*5/*15', phenotype='PM', detected_variants=[VariantInfo(gene..., rsid='rs4149056'), VariantInfo(gene='SLCO1B1', chromosome='10', position=1000, ref='C', alt='T', rsid='rs11045819')]).phenotype
+______________ TestAssessRisk.test_azathioprine_poor_metabolizer ______________
+tests\test_risk_engine.py:233: in test_azathioprine_poor_metabolizer
+    assert "Poor" in pgx.phenotype
+E   AssertionError: assert 'Poor' in 'PM'
+E    +  where 'PM' = PharmacogenomicProfile(primary_gene='TPMT', diplotype='*3B/*3C', phenotype='PM', detected_variants=[VariantInfo(gene='...='T', rsid='rs1800460'), VariantInfo(gene='TPMT', chromosome='10', position=1000, ref='C', alt='T', rsid='rs1142345')]).phenotype
+________________ TestAssessRisk.test_fluorouracil_no_activity _________________
+tests\test_risk_engine.py:245: in test_fluorouracil_no_activity
+    assert "No" in pgx.phenotype or "Severe" in pgx.phenotype
+E   AssertionError: assert ('No' in 'PM' or 'Severe' in 'PM')
+E    +  where 'PM' = PharmacogenomicProfile(primary_gene='DPYD', diplotype='*2A/c.1679T>G', phenotype='PM', detected_variants=[VariantInfo(...'T', rsid='rs3918290'), VariantInfo(gene='DPYD', chromosome='10', position=1000, ref='C', alt='T', rsid='rs55886062')]).phenotype
+E    +  and   'PM' = PharmacogenomicProfile(primary_gene='DPYD', diplotype='*2A/c.1679T>G', phenotype='PM', detected_variants=[VariantInfo(...'T', rsid='rs3918290'), VariantInfo(gene='DPYD', chromosome='10', position=1000, ref='C', alt='T', rsid='rs55886062')]).phenotype
+=========================== short test summary info ===========================
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[CYP2C9-none+none-Poor]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[CYP2C9-normal+normal-Normal]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[CYP2D6-none+none-Poor]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[CYP2D6-increased+increased-Ultrarapid]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[CYP2C19-none+none-Poor]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[CYP2C19-normal+increased-Rapid]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[SLCO1B1-reduced+reduced-Poor]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[TPMT-normal+none-Intermediate]
+FAILED tests/test_risk_engine.py::TestLookupPhenotype::test_phenotype_lookup[DPYD-none+none-No Dihydropyrimidine]
+FAILED tests/test_risk_engine.py::TestLookupRisk::test_high_risk_rule_exists_for_all_genes
+FAILED tests/test_risk_engine.py::TestLookupRisk::test_unknown_phenotype_returns_fallback
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_warfarin_poor_metabolizer
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_warfarin_no_variants_is_low_risk
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_codeine_poor_metabolizer
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_codeine_normal_is_low_risk
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_clopidogrel_poor_metabolizer
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_simvastatin_poor_function
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_azathioprine_poor_metabolizer
+FAILED tests/test_risk_engine.py::TestAssessRisk::test_fluorouracil_no_activity
+======================== 19 failed, 17 passed in 0.27s ========================
