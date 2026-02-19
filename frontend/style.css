@@ -613,6 +613,8 @@ button {
   transition: all var(--transition);
   appearance: none;
   -webkit-appearance: none;
+  /* Force light UI for native dropdown popup to keep options on a light background */
+  color-scheme: light;
 }
 
 .form-group input::placeholder {
@@ -1414,4 +1416,15 @@ button {
   .steps-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* === Dropdown option visibility fixes === */
+select option,
+select optgroup {
+  color: #0f172a; /* dark text */
+  background-color: #ffffff; /* light bg */
+}
+
+select option:disabled {
+  color: #64748b;
 }

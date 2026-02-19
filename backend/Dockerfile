@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libz-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --upgrade pip \
  && pip install --prefix=/install --no-cache-dir -r requirements.txt
 
@@ -34,7 +34,7 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 
 # Copy application source
-COPY app/ ./app/
+COPY backend/app/ ./app/
 
 # Copy optional .env (override via docker compose env_file or environment:)
 # We do NOT bake secrets into the image.
