@@ -13,7 +13,7 @@ import logging
 import tempfile
 from pathlib import Path
 from typing import Any
-import cyvcf2 as vcf  # PyVCF3
+import pyvcf3 as vcf
 
 from app.utils.exceptions import VCFParseError
 
@@ -52,7 +52,7 @@ def _record_to_dict(record: vcf.Variant) -> dict[str, Any]:
     if record.ALT:
         for a in record.ALT:
             alts.append(str(a) if a is not None else ".")
-
+    
     # INFO: flatten to plain Python types (some values are lists)
     info: dict[str, Any] = {}
     for key, val in (record.INFO or {}).items():
@@ -62,7 +62,7 @@ def _record_to_dict(record: vcf.Variant) -> dict[str, Any]:
             info[key] = None
         else:
             info[key] = val
-
+    
     # Sample genotypes (if present)
     samples: list[dict[str, Any]] = []
     for sample in record.samples:
@@ -72,7 +72,7 @@ def _record_to_dict(record: vcf.Variant) -> dict[str, Any]:
         except (AttributeError, KeyError):
             gt_data["GT"] = None
         samples.append(gt_data)
-
+    
     return {
         "CHROM": str(record.CHROM),
         "POS": int(record.POS),
