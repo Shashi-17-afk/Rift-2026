@@ -1,9 +1,13 @@
 /**
  * PharmaGuard — Frontend Application Logic
- * Communicates with the FastAPI backend at localhost:8000
+ * Communicates with the FastAPI backend
  */
 
-const API_BASE = 'http://localhost:8000';
+// Resolve API base dynamically:
+// 1) If <meta name="pg-api-base" content="..."> is present, use that.
+// 2) Otherwise default to relative root so Nginx proxy or same-origin backend works.
+const metaApi = document.querySelector('meta[name="pg-api-base"]');
+const API_BASE = (metaApi && metaApi.content && metaApi.content.trim()) ? metaApi.content.trim().replace(/\/$/, '') : '';
 
 /* ── DOM refs ─────────────────────────────────────────────────── */
 const form = document.getElementById('analyze-form');
