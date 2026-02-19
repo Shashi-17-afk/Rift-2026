@@ -3,11 +3,44 @@
  * Communicates with the FastAPI backend
  */
 
-// Resolve API base dynamically:
-// 1) If <meta name="pg-api-base" content="..."> is present, use that.
-// 2) Otherwise default to relative root so Nginx proxy or same-origin backend works.
-const metaApi = document.querySelector('meta[name="pg-api-base"]');
-const API_BASE = (metaApi && metaApi.content && metaApi.content.trim()) ? metaApi.content.trim().replace(/\/$/, '') : '';
+// Resolve API base dynamically (priority):
+// 1) ?api=https://... in URL → saved to localStorage
+// 2) <meta name="pg-api-base" content="...">
+// 3) localStorage.PG_API_BASE
+// 4) If running on localhost/127.0.0.1 → http://localhost:8000
+// 5) Fallback to relative root ('') to work with reverse proxies (Docker/Nginx)
+(function setupApiBase() {
+  const params = new URLSearchParams(window.location.search);
+  const apiFromQuery = params.get('api');
+  if (apiFromQuery) {
+    try { localStorage.setItem('PG_API_BASE', apiFromQuery); } catch {}
+  }
+})();
+
+function inferApiBase() {
+  const fromQuery = new URLSearchParams(window.location.search).get('api');
+  if (fromQuery && fromQuery.trim()) {
+    return fromQuery.trim().replace(/\/$/, '');
+  }
+  // Prefer localhost when developing locally (even if meta tag exists)
+  if (window.location.protocol === 'file:') {
+    return 'http://localhost:8000';
+  }
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://localhost:8000';
+  }
+  const meta = document.querySelector('meta[name="pg-api-base"]');
+  const fromMeta = meta && meta.content && meta.content.trim();
+  if (fromMeta) return fromMeta.replace(/\/$/, '');
+  try {
+    const fromStorage = localStorage.getItem('PG_API_BASE');
+    if (fromStorage && fromStorage.trim()) return fromStorage.trim().replace(/\/$/, '');
+  } catch {}
+  return '';
+}
+
+const API_BASE = inferApiBase();
 
 /* ── DOM refs ─────────────────────────────────────────────────── */
 const form = document.getElementById('analyze-form');
