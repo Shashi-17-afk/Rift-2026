@@ -13,18 +13,15 @@ import logging
 import tempfile
 from pathlib import Path
 from typing import Any
-
-import vcf  # PyVCF3
+import cyvcf2 as vcf  # PyVCF3
 
 from app.utils.exceptions import VCFParseError
 
 logger = logging.getLogger(__name__)
 
-
 # ---------------------------------------------------------------------------
 # Public data structure
 # ---------------------------------------------------------------------------
-
 
 class ParseResult:
     """Container returned by parse_vcf_bytes / parse_vcf_path."""
@@ -48,8 +45,7 @@ class ParseResult:
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-
-def _record_to_dict(record: vcf.model._Record) -> dict[str, Any]:
+def _record_to_dict(record: vcf.Variant) -> dict[str, Any]:
     """Convert a PyVCF3 Record to a serialisable dict."""
     # ALT alleles may be symbolic (e.g. <DEL>) – convert to strings safely
     alts: list[str] = []
@@ -90,23 +86,20 @@ def _record_to_dict(record: vcf.model._Record) -> dict[str, Any]:
         "samples": samples,
     }
 
-
-def _parse_reader(reader: vcf.Reader) -> list[dict[str, Any]]:
+def _parse_reader(reader: vcf.VCF) -> list[dict[str, Any]]:
     """Iterate through all records and return list of dicts."""
     variants: list[dict[str, Any]] = []
     for record in reader:
         try:
             variants.append(_record_to_dict(record))
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:  
             # Log but continue — one bad record shouldn't abort everything
             logger.warning("Skipping malformed VCF record: %s", exc)
     return variants
 
-
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
-
 
 def parse_vcf_bytes(vcf_bytes: bytes) -> ParseResult:
     """
@@ -140,9 +133,8 @@ def parse_vcf_bytes(vcf_bytes: bytes) -> ParseResult:
         # Clean up temp file
         try:
             Path(tmp_path).unlink(missing_ok=True)
-        except Exception:  # noqa: BLE001
+        except Exception:  
             pass
-
 
 def parse_vcf_path(file_path: str) -> ParseResult:
     """
@@ -162,9 +154,9 @@ def parse_vcf_path(file_path: str) -> ParseResult:
         raise VCFParseError(f"VCF file not found: {file_path}")
 
     try:
-        reader = vcf.Reader(filename=str(path))
+        reader = vcf.VCF(str(path))
         variants = _parse_reader(reader)
-    except vcf.parser.ParserError as exc:
+    except vcf.VCFError as exc:
         logger.warning("VCF parse error: %s", exc)
         raise VCFParseError(f"Malformed VCF: {exc}") from exc
     except Exception as exc:
