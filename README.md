@@ -72,6 +72,12 @@ docker compose up --build
 # Frontend → http://localhost:3000
 # Backend  → http://localhost:8000
 # API Docs → http://localhost:8000/docs
+
+# Live Links
+# Backend : https://pharmaguard-api-5zx9.onrender.com/health
+# Swagger docs: https://pharmaguard-api-5zx9.onrender.com/docs
+# Demo response: https://pharmaguard-api-5zx9.onrender.com/api/test
+# Frontend : https://rift-2026.vercel.app/
 ```
 
 ### Option B — Local (Python only)
